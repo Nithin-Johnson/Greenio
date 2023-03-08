@@ -21,9 +21,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Navigation(),
+    return MaterialApp(
+      home: Navigation(index: 0,),
       debugShowCheckedModeBanner: false,
+      theme: ThemeData.light().copyWith(
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.green,
+            elevation: 0,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.resolveWith(
+                    (states) => Colors.green)),
+          )),
     );
   }
 }

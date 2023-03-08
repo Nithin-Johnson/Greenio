@@ -8,14 +8,20 @@ class ButtonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ScreenItemDetails(title: itemname)));
-      },
-      child: Text(itemname),
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ScreenItemDetails(itemCategory: itemname)));
+        },
+        child: Text(
+          itemname,
+          style: const TextStyle(fontSize: 20,),
+        ),
+      ),
     );
   }
 }

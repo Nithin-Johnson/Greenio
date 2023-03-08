@@ -7,8 +7,9 @@ class ScreenDonate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(        
-        title: const Text('Donate'),
+      appBar: AppBar(
+        title: const Text('DONATE'),
+        centerTitle: true,
       ),
       body: const BodyDonate(),
     );

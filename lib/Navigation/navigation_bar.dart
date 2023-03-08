@@ -4,30 +4,35 @@ import 'package:greenio/Screens/HomeScreen/screen_home.dart';
 import 'package:greenio/Screens/MoreScreen/screen_more.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({super.key});
+  Navigation({super.key, required this.index});
+  final int index;
+  late int _selectedIndex = index;
 
   @override
   State<Navigation> createState() => _NavigationState();
 }
 
-class _NavigationState extends State<Navigation> {
-  int _selectedIndex = 0;
+class _NavigationState extends State<Navigation> { 
+  
 
-  static const List<Widget> _navigationBarBody =  [ScreenHome(), ScreenHistory(), ScreenMore()];
+  static const List<Widget> _navigationBarBody = [
+    ScreenHome(),
+    ScreenHistory(),
+    ScreenMore()
+  ];
 
-  void _onItemTapped(int index)
-  {
+  void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      widget._selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _navigationBarBody[_selectedIndex],
+      body: _navigationBarBody[widget._selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: widget._selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
