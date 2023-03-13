@@ -17,60 +17,75 @@ class _BodyWelcomeState extends State<BodyWelcome> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.only(top: 30),
-              child: const Text(
-                'Welcome',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: const Text(
+                        'Welcome',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.25,
+                    ),
+                    const Text('Continue with'),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.red),
+                        onPressed: () {},
+                        child: const Text(
+                          'Facebook',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () {},
+                        child: const Text(
+                          'Google',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Already have an account?'),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Sign in'),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .25,
-            ),
-            const Text('Continue with'),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.red),
-                onPressed: () {},
-                child: const Text(
-                  'Facebook',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  backgroundColor: Colors.red,
-                ),
-                onPressed: () {},
-                child: const Text(
-                  'Google',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Already have an account?'),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Sign in'),
-                )
-              ],
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(

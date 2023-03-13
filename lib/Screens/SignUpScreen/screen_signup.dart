@@ -15,11 +15,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: const BackButton(
-          color: Colors.black,
-        ),
+        foregroundColor: Colors.black,
+        title: const Text('Sign Up'),
+        centerTitle: true,
       ),
       body: const BodySignUp(),
+      resizeToAvoidBottomInset: false,
     );
   }
 }

@@ -7,82 +7,84 @@ class BodyHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.05,
-        ),
-        const Text(
-          'What you can do',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
           ),
-        ),
-        const Text('Let\'s make a better world'),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.15,
-        ),
-        InkWell(
-          // ignore: sort_child_properties_last
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/Images/DonateImage.png',
-                width: 140,
-                height: 140,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.height * 0.02,
-              ),
-              const Text(
-                'Donate',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+          const Text(
+            'What you can do',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Text('Let\'s make a better world'),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+          ),
+          InkWell(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/Images/DonateImage.png',
+                  width: 140,
+                  height: 140,
                 ),
-              ),
-            ],
-          ),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const ScreenDonate();
-            }));
-          },
-        ),
-        InkWell(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Recycle',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                SizedBox(
+                  width: MediaQuery.of(context).size.height * 0.02,
                 ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.height * 0.02,
-              ),
-              Image.asset(
-                'assets/Images/RecycleImage.png',
-                width: 140,
-                height: 140,
-              ),
-            ],
+                const Text(
+                  'Donate',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const ScreenDonate();
+              }));
+            },
           ),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const ScreenRecycle();
-            }));
-          },
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.19,
-        )
-      ],
+          InkWell(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Recycle',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Image.asset(
+                  'assets/Images/RecycleImage.png',
+                  width: 140,
+                  height: 140,
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const ScreenRecycle();
+              }));
+            },
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.19,
+          )
+        ],
+      ),
     );
   }
 }

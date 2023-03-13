@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:greenio/Screens/WelcomeScreen/screen_welcome.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class ScreenSplash extends StatefulWidget {
+  const ScreenSplash({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<ScreenSplash> createState() => _ScreenSplashState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _ScreenSplashState extends State<ScreenSplash> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 5), () async {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return const WelcomeScreen();
+        return const ScreenWelcome();
       }));
     });
     super.initState();

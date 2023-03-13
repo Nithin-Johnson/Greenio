@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:greenio/Navigation/navigation_bar.dart';
+import 'package:greenio/Screens/SplashScreen/screen_splash.dart';
+import 'package:greenio/Screens/WelcomeScreen/screen_welcome.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -22,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Navigation(index: 0,),
+      home: const ScreenSplash(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
           appBarTheme: const AppBarTheme(

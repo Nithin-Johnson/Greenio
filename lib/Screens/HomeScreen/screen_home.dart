@@ -12,8 +12,7 @@ class _ScreenHomeState extends State<ScreenHome> {
   @override
   Widget build(BuildContext context) {
     return const SafeArea(
-      child: BodyHome(),);
-      
-    
+      child: BodyHome(),
+    );
   }
 }
