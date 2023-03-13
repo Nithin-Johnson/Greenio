@@ -12,9 +12,7 @@ class Navigation extends StatefulWidget {
   State<Navigation> createState() => _NavigationState();
 }
 
-class _NavigationState extends State<Navigation> { 
-  
-
+class _NavigationState extends State<Navigation> {
   static const List<Widget> _navigationBarBody = [
     ScreenHome(),
     ScreenHistory(),

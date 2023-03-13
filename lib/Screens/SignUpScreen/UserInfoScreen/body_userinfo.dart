@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../Navigation/navigation_bar.dart';
+import '../../Components/empty_space.dart';
 
 class BodyUserInfo extends StatefulWidget {
   const BodyUserInfo({super.key});
@@ -35,7 +36,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         const Text(
                           'Name',
                           style: TextStyle(
@@ -57,7 +58,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                             _name = value!;
                           },
                         ),
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -89,7 +90,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 16.0),
+                            emptySpace(context, widthMultiplier: 0.02),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +121,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         const Text(
                           'Phone Number',
                           style: TextStyle(
@@ -143,7 +144,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                             _phoneNumber = value!;
                           },
                         ),
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         const Text(
                           'Address',
                           style: TextStyle(
@@ -165,7 +166,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                             _address = value!;
                           },
                         ),
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         const Text(
                           'Lankmark',
                           style: TextStyle(
@@ -187,7 +188,7 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
                             _landmark = value!;
                           },
                         ),
-                        const SizedBox(height: 16.0),
+                        emptySpace(context, heightMultiplier: 0.02),
                         Row(
                           children: [
                             const Text(

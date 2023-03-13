@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:greenio/Screens/Components/empty_space.dart';
+import 'package:greenio/Screens/Components/full_width_bottom_button.dart';
 import 'package:greenio/Screens/SignUpScreen/UserInfoScreen/screen_userinfo.dart';
 
 class BodySignUp extends StatefulWidget {
@@ -19,6 +21,8 @@ class _BodySignUpState extends State<BodySignUp> {
 
   @override
   void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _rePasswordController.dispose();
     super.dispose();
@@ -28,6 +32,17 @@ class _BodySignUpState extends State<BodySignUp> {
     setState(() {
       _passwordMatch = _passwordController.text == _rePasswordController.text;
     });
+  }
+
+  void onButtonPressed() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return const ScreenUserInfo();
+        }),
+      );
+    }
   }
 
   @override
@@ -44,10 +59,9 @@ class _BodySignUpState extends State<BodySignUp> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.05),
                     TextFormField(
+                      controller: _usernameController,
                       decoration: const InputDecoration(
                         labelText: 'Username',
                         hintText: 'Enter a username',
@@ -60,8 +74,9 @@ class _BodySignUpState extends State<BodySignUp> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16.0),
+                    emptySpace(context, heightMultiplier: 0.02),
                     TextFormField(
+                      controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         hintText: 'Enter your email',
@@ -74,7 +89,7 @@ class _BodySignUpState extends State<BodySignUp> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16.0),
+                    emptySpace(context, heightMultiplier: 0.02),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Password',
@@ -93,7 +108,7 @@ class _BodySignUpState extends State<BodySignUp> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16.0),
+                    emptySpace(context, heightMultiplier: 0.02),
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Re-enter password',
@@ -122,9 +137,7 @@ class _BodySignUpState extends State<BodySignUp> {
                         return null;
                       },
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.2,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.2),
                     Row(
                       children: [
                         const Text(
@@ -143,9 +156,7 @@ class _BodySignUpState extends State<BodySignUp> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.02),
                     const Text(
                       'By creating your account confirm that you agree with our',
                       textAlign: TextAlign.center,
@@ -164,20 +175,10 @@ class _BodySignUpState extends State<BodySignUp> {
             ),
           ),
         ),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(80),
-              backgroundColor: Colors.green),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const ScreenUserInfo();
-            }));
-          },
-          child: const Text(
-            'Next',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+        fullWidthBottomButton(
+          buttonText: 'next',
+          onPressed: onButtonPressed,
+        )
       ],
     );
   }

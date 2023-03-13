@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenio/Screens/Components/full_width_bottom_button.dart';
 
 class BodyItemDetails extends StatefulWidget {
   const BodyItemDetails({super.key, required this.itemCategory});
@@ -9,6 +10,12 @@ class BodyItemDetails extends StatefulWidget {
 
 class _BodyItemDetailsState extends State<BodyItemDetails> {
   final _controller = TextEditingController();
+
+  void onButtonPressed() {
+    // Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //   return const ScreenConfirmation();
+    // }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,20 +115,10 @@ class _BodyItemDetailsState extends State<BodyItemDetails> {
             ),
           ),
         ),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(80),
-              backgroundColor: Colors.green),
-          onPressed: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return const SignUpScreen();
-            // }));
-          },
-          child: const Text(
-            'Confirm',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+        fullWidthBottomButton(
+          buttonText: 'confirm',
+          onPressed: onButtonPressed,
+        )
       ],
     );
   }

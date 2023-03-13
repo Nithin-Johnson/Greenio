@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:greenio/Screens/WelcomeScreen/screen_welcome.dart';
 
+import '../Components/empty_space.dart';
+
 class ScreenSplash extends StatefulWidget {
   const ScreenSplash({super.key});
 
@@ -29,13 +31,11 @@ class _ScreenSplashState extends State<ScreenSplash> {
           children: [
             Image.asset(
               'assets/Images/SplashScreenLogo.png',
-              width: 200, // set the width of the image
-              height: 200, // set the height of the image
-              fit: BoxFit.contain, // set the fit of the image
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(
-              height: 70,
-            ),
+            emptySpace(context, heightMultiplier: 0.1),
             const Text(
               'GREENIO',
               style: TextStyle(

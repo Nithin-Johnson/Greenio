@@ -11,7 +11,7 @@ class ButtonItem extends StatelessWidget {
     return Center(
       child: SizedBox(
         height: 50,
-        width: MediaQuery.of(context).size.width * 0.71,
+        width: MediaQuery.of(context).size.width * 0.6,
         child: TextButton(
           onPressed: () {
             Navigator.push(

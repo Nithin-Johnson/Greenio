@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:greenio/Screens/Components/empty_space.dart';
+import 'package:greenio/Screens/Components/full_width_bottom_button.dart';
 
 import '../SignUpScreen/screen_signup.dart';
 
@@ -10,6 +12,12 @@ class BodyWelcome extends StatefulWidget {
 }
 
 class _BodyWelcomeState extends State<BodyWelcome> {
+  void onButtonPressed() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const SignUpScreen();
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,20 +40,17 @@ class _BodyWelcomeState extends State<BodyWelcome> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.25),
                     const Text('Continue with'),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.01),
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.red),
+                          minimumSize: const Size.fromHeight(50),
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.red,
+                        ),
                         onPressed: () {},
                         child: const Text(
                           'Facebook',
@@ -53,9 +58,7 @@ class _BodyWelcomeState extends State<BodyWelcome> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.01),
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: TextButton(
@@ -70,9 +73,7 @@ class _BodyWelcomeState extends State<BodyWelcome> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.3,
-                    ),
+                    emptySpace(context, heightMultiplier: 0.3),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -87,20 +88,10 @@ class _BodyWelcomeState extends State<BodyWelcome> {
                 ),
               ),
             ),
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(80),
-                  backgroundColor: Colors.green),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const SignUpScreen();
-                }));
-              },
-              child: const Text(
-                'Create account',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+            fullWidthBottomButton(
+              buttonText: 'create an account',
+              onPressed: onButtonPressed,
+            )
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:greenio/Navigation/navigation_bar.dart';
+import 'package:greenio/Screens/Components/empty_space.dart';
 import 'package:greenio/Screens/HomeScreen/DonateScreen/ItemButton/button_items.dart';
 
 class BodyDonate extends StatefulWidget {
@@ -39,13 +40,11 @@ class _BodyDonateState extends State<BodyDonate> {
     return SingleChildScrollView(
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(25.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.15,
-              ),
+              emptySpace(context, heightMultiplier: 0.15),
               DropdownButtonHideUnderline(
                 child: DropdownButton2<Widget>(
                   hint: const Text(
@@ -68,11 +67,9 @@ class _BodyDonateState extends State<BodyDonate> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
+                      left: 35,
+                      right: 30,
                     ),
-                    overlayColor: MaterialStateProperty.resolveWith(
-                        (states) => Colors.red),
                   ),
                   iconStyleData: const IconStyleData(
                     icon: Icon(
@@ -90,9 +87,7 @@ class _BodyDonateState extends State<BodyDonate> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-              ),
+              emptySpace(context, heightMultiplier: 0.1),
               ElevatedButton(
                 onPressed: () {},
                 style: ButtonStyle(
@@ -111,9 +106,7 @@ class _BodyDonateState extends State<BodyDonate> {
                   trailing: Icon(Icons.hourglass_bottom),
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-              ),
+              emptySpace(context, heightMultiplier: 0.1),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -138,9 +131,7 @@ class _BodyDonateState extends State<BodyDonate> {
                   trailing: Icon(Icons.history),
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.2,
-              ),
+              emptySpace(context, heightMultiplier: 0.2),
             ],
           ),
         ),
