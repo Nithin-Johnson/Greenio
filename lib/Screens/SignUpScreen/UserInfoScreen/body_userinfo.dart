@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenio/Screens/Components/full_width_bottom_button.dart';
 
 import '../../../Navigation/navigation_bar.dart';
 import '../../Components/empty_space.dart';
@@ -20,6 +21,20 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
   String _address = '';
   String _landmark = '';
   bool _saveAsPrimaryAddress = false;
+
+  void onButtonPressed() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return Navigation(
+            index: 0,
+          );
+        },
+      ),
+      (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -215,23 +230,10 @@ class _BodyUserInfoState extends State<BodyUserInfo> {
             ),
           ),
         ),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(80),
-              backgroundColor: Colors.green),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) {
-              return Navigation(
-                index: 0,
-              );
-            }), (Route<dynamic> route) => false);
-          },
-          child: const Text(
-            'Register',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+        fullWidthBottomButton(
+          buttonText: 'register',
+          onPressed: onButtonPressed,
+        )
       ],
     );
   }
