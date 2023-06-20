@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "26074981651",
+    "project_id": "greenioworld",
+    "storage_bucket": "greenioworld.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26074981651:android:f2fb5d27a28e9d7f4826e6",
+        "android_client_info": {
+          "package_name": "com.greenio.greenio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "26074981651-fvmsvk9v453jsf7n6tshdms3jenb5v0d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvU7XHUBiY5dOyG-XV64E5Y9nJNbNtYHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "26074981651-fvmsvk9v453jsf7n6tshdms3jenb5v0d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
