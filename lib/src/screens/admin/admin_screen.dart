@@ -99,7 +99,7 @@ class _AdminScreenState extends State<AdminScreen> {
                           _showNotes('You can check the list of wards for which there is a pending donation.')
                         ],
                       ),
-                    if (user.adminType == AdminType.nss)
+                    if (user.adminType == AdminType.govt)
                       Column(
                         children: [
                           const EmptySpace(heightFraction: 0.1),

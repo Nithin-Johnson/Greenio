@@ -1,4 +1,4 @@
-enum AdminType { ngo, nss }
+enum AdminType { ngo, govt }
 
 class UserModel {
   String? picture;
@@ -58,8 +58,8 @@ class UserModel {
   static AdminType? _parseAdminType(String? value) {
     if (value == 'AdminType.ngo') {
       return AdminType.ngo;
-    } else if (value == 'AdminType.nss') {
-      return AdminType.nss;
+    } else if (value == 'AdminType.govt') {
+      return AdminType.govt;
     }
     return null;
   }

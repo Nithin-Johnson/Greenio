@@ -87,7 +87,7 @@ class _MoreScreenState extends State<MoreScreen> {
                               : null,
                         ),
                         _displayName(user.fullName ?? ''),
-                        if (user.adminType == AdminType.ngo || user.adminType == AdminType.nss)
+                        if (user.adminType == AdminType.ngo || user.adminType == AdminType.govt)
                           InkWell(
                             splashColor: Colors.green,
                             onTap: () => NavigationUtils.navigateTo(context, const AdminScreen()),
