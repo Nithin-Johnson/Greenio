@@ -83,9 +83,6 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
 
   Future<void> confirmSelection() async {
     if (selectedDateNotifier.value != null) {
-      // if (wardSchedule.selectedDates != null) {
-      //   selectedDates = wardSchedule.selectedDates!;
-      // }
       selectedDates[_houseNumber!] = selectedDateNotifier.value!;
       await _firestoreService.addWardScheduleAssignedDatesToDatabase(_wardNumber, selectedDates);
     }
@@ -117,6 +114,74 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
     );
   }
 
+  ListTile _showNote(String text) {
+    return ListTile(
+      leading: const Icon(Icons.info),
+      subtitle: Text(
+        text,
+        style: const TextStyle(fontSize: 20),
+      ),
+    );
+  }
+
+  ValueListenableBuilder<DateTime?> _showCurrentlySelectedDate() {
+    return ValueListenableBuilder(
+      valueListenable: selectedDateNotifier,
+      builder: (context, selectedDate, child) {
+        if (selectedDate != null) {
+          final String formattedDate = DateFormat.yMMMMd().format(selectedDate);
+          return _showCurrentlySelectedDateCard(formattedDate, Colors.green);
+        } else {
+          return _showCurrentlySelectedDateCard('None', Colors.red);
+        }
+      },
+    );
+  }
+
+  Card _showCurrentlySelectedDateCard(String text, Color color) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        title: Text(
+          'Currently selected date:\n$text',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        tileColor: color,
+        textColor: Colors.white,
+      ),
+    );
+  }
+
+  ElevatedButton _showConfirmButton() {
+    return ElevatedButton(
+      onPressed: () {
+        confirmSelection();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[400],
+      ),
+      child: const Text('Confirm date'),
+    );
+  }
+
+  ListView _showDatesOptions() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: assignedDates.length,
+      itemBuilder: (context, index) {
+        final date = assignedDates[index];
+        return ValueListenableBuilder<DateTime?>(
+          valueListenable: selectedDateNotifier,
+          builder: (context, selectedDate, child) {
+            final isSelected = date == selectedDate;
+            return _showDates(date, isSelected);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
@@ -127,104 +192,33 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: (selectedDates.isNotEmpty && selectedDate!=null) ? Column(
-            children: [
-              if (assignedDates.isNotEmpty)
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: assignedDates.length,
-                  itemBuilder: (context, index) {
-                    final date = assignedDates[index];
-                    return ValueListenableBuilder<DateTime?>(
-                      valueListenable: selectedDateNotifier,
-                      builder: (context, selectedDate, child) {
-                        final isSelected = date == selectedDate;
-                        return _showDates(date, isSelected);
-                      },
-                    );
-                  },
+          child: selectedDates.isEmpty || (selectedDates.isNotEmpty && selectedDate != null)
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: assignedDates.isNotEmpty
+                      ? [
+                          _showDatesOptions(),
+                          const EmptySpace(heightFraction: 0.02),
+                          _showConfirmButton(),
+                          const EmptySpace(heightFraction: 0.1),
+                          _showCurrentlySelectedDate(),
+                          const EmptySpace(heightFraction: 0.1),
+                          _showNote(
+                              'The provided options for dates can change each month.\nDo regularly check for any changes.'),
+                        ]
+                      : [
+                          _showNote(
+                              'Please check again later.\nCurrenly no dates has been assigned for garbage collection for your ward.'),
+                        ],
                 )
-              else
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      ListTile(
-                        leading: Icon(Icons.info),
-                        title: Text(
-                          'No dates available',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        subtitle: Text(
-                            'Please check again later.\nCurrenly no dates has been assigned for garbage collection for your ward.'),
-                      ),
-                    ],
-                  ),
+              : Center(
+                  child: _showNote(
+                      "The garbage collection for your house number has already been completed for this month."),
                 ),
-              const EmptySpace(heightFraction: 0.02),
-              if (assignedDates.isNotEmpty)
-                ElevatedButton(
-                  onPressed: () {
-                    confirmSelection();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[400],
-                  ),
-                  child: const Text('Confirm date'),
-                ),
-              const EmptySpace(heightFraction: 0.1),
-              if (assignedDates.isNotEmpty)
-                ValueListenableBuilder(
-                  valueListenable: selectedDateNotifier,
-                  builder: (context, selectedDate, child) {
-                    if (selectedDate != null) {
-                      return Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: ListTile(
-                          title: Text(
-                            'Currently selected date:\n${DateFormat.yMMMMd().format(selectedDate)}',
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          tileColor: Colors.green[400],
-                          textColor: Colors.white,
-                        ),
-                      );
-                    } else {
-                      return Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: ListTile(
-                          title: const Text(
-                            'Currently selected date: None',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          tileColor: Colors.red[400],
-                          textColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              const EmptySpace(heightFraction: 0.2),
-              const ListTile(
-                leading: Icon(Icons.info),
-                subtitle: Text(
-                    'Note: The provided options for dates can change each month. Do regularly check for any changes.'),
-              ),
-            ],
-          ) : const Center(
-            child: ListTile(
-              leading: Icon(Icons.info),
-              subtitle: Text("The garbage collection for your house number has already been completed for this month.", style: TextStyle(fontSize: 20),),              
-            ),
-          ),
         ),
       );
     } else {
       return const NoInternetScreen();
     }
   }
-
-  
 }
