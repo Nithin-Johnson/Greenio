@@ -27,7 +27,8 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
   late String _wardNumber;
   String? _houseNumber;
   List<DateTime> assignedDates = [];
-  Map<String, DateTime> selectedDates = {};
+  Map<String, DateTime?> selectedDates = {};
+  DateTime? selectedDate;
   ValueNotifier<DateTime?> selectedDateNotifier = ValueNotifier<DateTime?>(null);
 
   StreamSubscription<DocumentSnapshot>? wardDatesSubscription;
@@ -71,8 +72,8 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
   }
 
   void setSelectedDates(Map<String, dynamic>? selectedDates, String wardNumber) async {
-    _houseNumber = user.houseNumber;    
-    final selectedDate = selectedDates?[_houseNumber];
+    _houseNumber = user.houseNumber;
+    selectedDate = selectedDates?[_houseNumber];
     selectedDateNotifier.value = selectedDate;
   }
 
@@ -95,6 +96,27 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
     SnackBarHelper.showSnackBar(context, 'Date assigned! You can go back now!');
   }
 
+  Card _showDates(DateTime date, bool isSelected) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        tileColor: isSelected ? Colors.green[400] : null,
+        title: Text(
+          DateFormat.yMMMd().format(date),
+          style: TextStyle(
+            color: isSelected ? Colors.white : null,
+            fontWeight: isSelected ? FontWeight.bold : null,
+          ),
+        ),
+        trailing: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
+        onTap: () {
+          selectDate(date);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
@@ -105,7 +127,7 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
+          child: (selectedDates.isNotEmpty && selectedDate!=null) ? Column(
             children: [
               if (assignedDates.isNotEmpty)
                 ListView.builder(
@@ -139,9 +161,7 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
                     ],
                   ),
                 ),
-              const EmptySpace(
-                heightFraction: 0.02,
-              ),
+              const EmptySpace(heightFraction: 0.02),
               if (assignedDates.isNotEmpty)
                 ElevatedButton(
                   onPressed: () {
@@ -152,9 +172,7 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
                   ),
                   child: const Text('Confirm date'),
                 ),
-              const EmptySpace(
-                heightFraction: 0.1,
-              ),
+              const EmptySpace(heightFraction: 0.1),
               if (assignedDates.isNotEmpty)
                 ValueListenableBuilder(
                   valueListenable: selectedDateNotifier,
@@ -195,6 +213,11 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
                     'Note: The provided options for dates can change each month. Do regularly check for any changes.'),
               ),
             ],
+          ) : const Center(
+            child: ListTile(
+              leading: Icon(Icons.info),
+              subtitle: Text("The garbage collection for your house number has already been completed for this month.", style: TextStyle(fontSize: 20),),              
+            ),
           ),
         ),
       );
@@ -203,24 +226,5 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
     }
   }
 
-  Card _showDates(DateTime date, bool isSelected) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        tileColor: isSelected ? Colors.green[400] : null,
-        title: Text(
-          DateFormat.yMMMd().format(date),
-          style: TextStyle(
-            color: isSelected ? Colors.white : null,
-            fontWeight: isSelected ? FontWeight.bold : null,
-          ),
-        ),
-        trailing: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
-        onTap: () {
-          selectDate(date);
-        },
-      ),
-    );
-  }
+  
 }

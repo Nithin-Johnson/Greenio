@@ -62,7 +62,7 @@ class FirestoreService {
     await _wardSchedulesCollectionRef.doc(wardSchedule.wardNumber).set(wardSchedule.toMap());
   }
 
-  Future<void> addWardScheduleAssignedDatesToDatabase(String wardNumber, Map<String, DateTime> selectedDates) async {
+  Future<void> addWardScheduleAssignedDatesToDatabase(String wardNumber, Map<String, DateTime?> selectedDates) async {
     await _wardSchedulesCollectionRef.doc(wardNumber).update({
       'selectedDates': selectedDates,
     });

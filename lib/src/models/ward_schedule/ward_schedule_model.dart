@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class WardScheduleModel {
   final String wardNumber;
   final List<DateTime> assignedDates;
-  final Map<String, DateTime>? selectedDates;
+  final Map<String, DateTime?>? selectedDates;
 
   WardScheduleModel({
     required this.wardNumber,
@@ -28,9 +28,9 @@ class WardScheduleModel {
       ),
     ),
     selectedDates: map['selectedDates'] != null
-        ? Map<String, DateTime>.from(
+        ? Map<String, DateTime?>.from(
             (map['selectedDates'] as Map<String, dynamic>).map(
-              (key, value) => MapEntry(key, (value as Timestamp).toDate()),
+              (key, value) => MapEntry(key, value !=null ? (value as Timestamp).toDate() : value),
             ),
           )
         : null,
