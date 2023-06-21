@@ -53,7 +53,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   }
 
   Future _checkEmailVerified() async {
-    await _firebaseAuthService.currentUser!.reload();
+    await _firebaseAuthService.currentUser?.reload();
     setState(() => _isEmailVerified = _firebaseAuthService.currentUser!.emailVerified);
     if (_isEmailVerified) {
       _timer?.cancel();
