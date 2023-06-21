@@ -18,13 +18,9 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   @override
   Widget build(BuildContext context) {
     if (showLoginScreen) {
-      return LoginScreen(
-        toggleScreen: toggleScreen,
-      );
+      return LoginScreen(toggleScreen: toggleScreen);
     } else {
-      return SignUpScreen(
-        toggleScreen: toggleScreen,
-      );
+      return SignUpScreen(toggleScreen: toggleScreen);
     }
   }
 }
