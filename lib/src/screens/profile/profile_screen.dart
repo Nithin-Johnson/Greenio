@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ProfileScreenFields.fullName(_fullnameController, isEditingProfile),
         const EmptySpace(heightFraction: 0.01),
         ProfileScreenFields.label('Email address'),
-        ProfileScreenFields.email(_emailController, isEditingProfile),
+        ProfileScreenFields.email(_emailController),
         const EmptySpace(heightFraction: 0.01),
         ProfileScreenFields.label('Phone number'),
         ProfileScreenFields.phoneNumber(_phoneNumberController, isEditingProfile),
@@ -171,20 +171,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Text('Profile'),
           actions: isEditingProfile ? null : [IconButton(onPressed: _editProfile, icon: const Icon(Icons.edit))],
         ),
-        body: StreamBuilder(
-          stream: _firestoreService.getUserStreamDocSnapshot(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text('Error ${snapshot.error}'));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final userDoc = snapshot.data!.data();
-            user = UserModel.fromMap(userDoc!);
-            _initializeFields(user);
-            return SingleChildScrollView(
-              child: Padding(
+        body: SingleChildScrollView(
+          child: StreamBuilder(
+            stream: _firestoreService.getUserStreamDocSnapshot(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error ${snapshot.error}'));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final userDoc = snapshot.data!.data();
+              user = UserModel.fromMap(userDoc!);
+              _initializeFields(user);
+              return Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
@@ -199,9 +199,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _profileFields(),
                   ],
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       );
     } else {

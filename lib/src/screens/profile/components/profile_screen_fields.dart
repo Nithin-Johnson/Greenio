@@ -16,12 +16,7 @@ class ProfileScreenFields {
         backgroundImage: localPictureUrl != null
             ? FileImage(localPictureUrl)
             : (networkPictureUrl != null ? NetworkImage(networkPictureUrl) as ImageProvider : null),
-        child: ((localPictureUrl == null) && (networkPictureUrl == null))
-            ? const Icon(
-                Icons.person,
-                size: 50,
-              )
-            : null,
+        child: ((localPictureUrl == null) && (networkPictureUrl == null)) ? const Icon(Icons.person, size: 50) : null,
       ),
     );
   }
@@ -34,10 +29,10 @@ class ProfileScreenFields {
     );
   }
 
-  static email(emailController, isEditingProfile) {
+  static email(emailController) {
     return CustomTextFormFieldTile(
       controller: emailController,
-      isEnabled: isEditingProfile,
+      isEnabled: false,
       prefixIcon: Icons.email_outlined,
       keyboardType: TextInputType.emailAddress,
     );
