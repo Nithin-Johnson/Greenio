@@ -164,15 +164,8 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          icon: const Icon(
-            Icons.warning_amber_outlined,
-            size: 40,
-            color: Colors.red,
-          ),
-          title: const Text(
-            'Are you sure?',
-            style: TextStyle(color: Colors.red),
-          ),
+          icon: const Icon(Icons.warning_amber_outlined, size: 40, color: Colors.red),
+          title: const Text('Are you sure?', style: TextStyle(color: Colors.red)),
           content: const Text('Are you sure you want to delete all assigned dates?'),
           actions: [
             TextButton(onPressed: _popDialog, child: const Text('Cancel')),
@@ -190,6 +183,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
   }
 
   _deleteAssignedDates(queryDocSnapshotDocs, wardSchedulesCollectionRef) async {
+    _popDialog();
     try {
       for (var docSnapshot in queryDocSnapshotDocs) {
         await wardSchedulesCollectionRef.doc(docSnapshot.id).delete();
@@ -198,7 +192,6 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
     } on Exception catch (e) {
       _showToast(e.toString());
     }
-    _popDialog();
   }
 
   _showToast(String message) {
@@ -215,7 +208,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
         if (snapshot.hasData) {
           final wardScheduleDocSnapshotList = snapshot.data!.docs;
           return ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: wardScheduleDocSnapshotList.length,
             itemBuilder: (context, index) {
