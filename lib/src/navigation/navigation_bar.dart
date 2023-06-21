@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:greenio/src/navigation/components/navigation_bar_items.dart';
 import 'package:greenio/src/screens/history/history_screen.dart';
@@ -24,9 +23,7 @@ class _NavigationState extends State<Navigation> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
   }
 
   @override

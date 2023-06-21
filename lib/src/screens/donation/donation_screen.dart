@@ -17,32 +17,16 @@ class DonationScreen extends StatefulWidget {
 }
 
 class _DonationScreenState extends State<DonationScreen> {
-  final donationScreenComponents = DonationScreenComponents();
   final firestoreService = FirestoreService();
 
-  void _moveToItemDetailsScreen(String itemCategory) {
+  void _goToItemUploadScreen(String itemCategory) {
     NavigationUtils.navigateTo(context, ItemUploadScreen(itemCategory: itemCategory));
-  }
-
-  Widget _showProfileNotCompleteWarning() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        Icon(Icons.warning, size: 60),
-        Text(
-          'Your profile is not complete! Please update your profile and try again.\nGo to More -> Profile',
-          style: TextStyle(fontSize: 20),
-          textAlign: TextAlign.justify,
-        ),
-      ],
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
-      final Size size = MediaQuery.of(context).size;
       return Scaffold(
         appBar: AppBar(title: const Text('Donate')),
         body: Padding(
@@ -56,17 +40,17 @@ class _DonationScreenState extends State<DonationScreen> {
                 final user = snapshot.data!.data() as Map<String, dynamic>;
                 final userData = UserModel.fromMap(user);
                 if (!userData.isProfileComplete) {
-                  return _showProfileNotCompleteWarning();
+                  return DonationScreenComponents.profileNotCompleteWarning();
                 }
                 return SingleChildScrollView(
                   child: Column(
                     children: [
                       const EmptySpace(heightFraction: 0.05),
-                      donationScreenComponents.donationScreenHeading(),
+                      DonationScreenComponents.heading(),
                       const EmptySpace(heightFraction: 0.1),
-                      donationScreenComponents.donationScreenItemCategories(context,
-                          size: size, moveToItemDetailsScreen: _moveToItemDetailsScreen),
-                      donationScreenComponents.donationScreenHelpText(),
+                      DonationScreenComponents.itemCategories(context, goToItemUploadScreen: _goToItemUploadScreen),
+                      const EmptySpace(heightFraction: 0.2),
+                      DonationScreenComponents.helpText(),
                     ],
                   ),
                 );

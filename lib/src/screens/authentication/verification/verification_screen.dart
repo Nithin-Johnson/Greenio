@@ -54,9 +54,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   Future _checkEmailVerified() async {
     await _firebaseAuthService.currentUser!.reload();
-    setState(() {
-      _isEmailVerified = _firebaseAuthService.currentUser!.emailVerified;
-    });
+    setState(() => _isEmailVerified = _firebaseAuthService.currentUser!.emailVerified);
     if (_isEmailVerified) {
       _timer?.cancel();
     }
@@ -67,30 +65,28 @@ class _VerificationScreenState extends State<VerificationScreen> {
     return _isEmailVerified
         ? const Navigation()
         : Scaffold(
-            appBar: AppBar(
-              title: const Text('Verify your email'),
-            ),
+            appBar: AppBar(title: const Text('Verify your email')),
             body: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
-                    Icons.email,
-                    size: 80,
-                    color: Colors.green,
-                  ),
-                  const EmptySpace(heightFraction: 0.03,),
+                  const Icon(Icons.email, size: 80, color: Colors.green),
+                  const EmptySpace(heightFraction: 0.03),
                   const Text(
-                    'A verification email has been sent to your email address.\n\n Please check your email address.',
+                    'A verification email has been sent to your email address.\n\nPlease check your email address.',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  const EmptySpace(heightFraction: 0.03,),
+                  const EmptySpace(heightFraction: 0.03),
                   CustomElevatedButton(
                     text: 'Resend Email',
-                    onPressed: _canResendEmail ? _sendVerificationEmail : (){},
+                    onPressed: _canResendEmail ? _sendVerificationEmail : () {},
+                  ),
+                  CustomElevatedButton(
+                    text: 'Cancel',
+                    onPressed: () async => await _firebaseAuthService.signOut(),
                   ),
                 ],
               ),

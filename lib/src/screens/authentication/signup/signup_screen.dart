@@ -1,25 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:greenio/src/models/user/user_model.dart';
-import 'package:greenio/src/screens/authentication/components/auth_screen_text.dart';
+import 'package:greenio/src/screens/authentication/components/authentication_components.dart';
+import 'package:greenio/src/screens/authentication/signup/components/signup_screen_components.dart';
 import 'package:greenio/src/screens/no_internet/no_internet_screen.dart';
 import 'package:greenio/src/services/firestore_service.dart';
 import 'package:greenio/src/utils/connectivity/internet_connectivity.dart';
 import 'package:greenio/src/utils/widgets/custom_button.dart';
-import 'package:greenio/src/utils/widgets/custom_textform_field.dart';
 import 'package:greenio/src/utils/widgets/snackbar_helper.dart';
 import 'package:greenio/src/utils/widgets/spacing_utils.dart';
-import 'package:greenio/src/screens/authentication/components/custom_auth_textbutton.dart';
 import 'package:greenio/src/screens/authentication/signup/components/signup_user.dart';
-import 'package:greenio/src/screens/authentication/signup/components/signup_validators.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
-  final VoidCallback toggleScreenToLoginScreen;
+  final VoidCallback toggleScreen;
 
   const SignUpScreen({
     Key? key,
-    required this.toggleScreenToLoginScreen,
+    required this.toggleScreen,
   }) : super(key: key);
 
   @override
@@ -34,43 +32,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _rePasswordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  Widget get _emailTextField => CustomTextFormFieldTile(
-        controller: _emailController,
-        hintText: 'Email',
-        prefixIcon: Icons.mail,
-        validator: validateEmail,
-        isEnabled: true,
-      );
-
-  Widget get _passwordTextField => CustomTextFormFieldTile(
-        controller: _passwordController,
-        hintText: 'Password',
-        prefixIcon: Icons.password,
-        isPassword: true,
-        validator: validatePassword,
-        isEnabled: true,
-      );
-
-  Widget get _rePasswordTextField => CustomTextFormFieldTile(
-        controller: _rePasswordController,
-        hintText: 'Re-enter Password',
-        prefixIcon: Icons.password,
-        enableDoneAction: true,
-        isPassword: true,
-        isEnabled: true,
-        validator: (value) {
-          return validateRePassword.validateMatch(_passwordController.text, value!);
-        },
-      );
-
-  CustomAuthTextButton _switchToLoginScreenButton() {
-    return CustomAuthTextButton(
-      onTap: widget.toggleScreenToLoginScreen,
-      firstText: 'Already have an account?',
-      secondText: 'Sign in',
-    );
-  }
 
   Future<void> _onSignUpButtonPressed() async {
     if (_formKey.currentState!.validate()) {
@@ -115,26 +76,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.green[50],
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.all(18.0),
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   children: [
-                    authScreenText(text: 'Hello there!', fontSize: 50, isBold: true),
+                    AuthenticationComponents.heading(text: 'Hello there!', fontSize: 50, isBold: true),
                     const EmptySpace(heightFraction: 0.01),
-                    authScreenText(text: 'Register below with your details', fontSize: 20),
+                    AuthenticationComponents.heading(text: 'Register below with your details', fontSize: 20),
                     const EmptySpace(heightFraction: 0.03),
-                    _emailTextField,
+                    SignupScreenComponents.emailTextField(_emailController),
                     const EmptySpace(heightFraction: 0.001),
-                    _passwordTextField,
+                    SignupScreenComponents.passwordTextField(_passwordController),
                     const EmptySpace(heightFraction: 0.001),
-                    _rePasswordTextField,
+                    SignupScreenComponents.rePasswordTextField(_passwordController, _rePasswordController),
                     const EmptySpace(heightFraction: 0.03),
                     CustomElevatedButton(text: 'Sign Up', onPressed: _onSignUpButtonPressed),
                     const EmptySpace(heightFraction: 0.02),
-                    _switchToLoginScreenButton(),
+                    SignupScreenComponents.toggleButton(widget.toggleScreen),
                   ],
                 ),
               ),

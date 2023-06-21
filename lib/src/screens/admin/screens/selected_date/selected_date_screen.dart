@@ -124,9 +124,7 @@ class _SelectedDateScreenState extends State<SelectedDateScreen> {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Selected Date for Recycling'),
-        ),
+        appBar: AppBar(title: const Text('Selected Date for Recycling')),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: StreamBuilder(
@@ -138,23 +136,20 @@ class _SelectedDateScreenState extends State<SelectedDateScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final wardNumbers = snapshot.data!.docs;
-              if (wardNumbers.isEmpty) {
+              final wardNumbersList = snapshot.data!.docs;
+              if (wardNumbersList.isEmpty) {
                 return const Center(
                   child: ListTile(
                     leading: Icon(Icons.info),
-                    title: Text(
-                      'No dates available',
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    title: Text('No dates available', style: TextStyle(fontSize: 20)),
                     subtitle: Text('Currenly no dates has been assigned for garbage collection for in any ward.'),
                   ),
                 );
               }
               return ListView.builder(
-                itemCount: wardNumbers.length,
+                itemCount: wardNumbersList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final wardNumberDoc = wardNumbers[index];
+                  final wardNumberDoc = wardNumbersList[index];
                   final wardNumber = wardNumberDoc.id;
                   final WardScheduleModel wardSchedule = WardScheduleModel.fromMap(wardNumberDoc.data());
                   final Map<String, DateTime?>? selectedDates = wardSchedule.selectedDates;

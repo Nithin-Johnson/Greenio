@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:greenio/src/screens/splash/components/splash_body.dart';
-import 'package:greenio/src/screens/splash/components/splash_timer.dart';
+import 'package:greenio/src/screens/splash/components/splash_screen_components.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final splashScreenBody = SplashScreenBody();
-
   @override
   void initState() {
-    splashTimer(context);
+    SplashScreenComponents.splashTimer(context);
     super.initState();
   }
 
@@ -25,14 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            splashScreenBody.splashScreenLogoImage,
+            SplashScreenComponents.splashScreenLogoImage,
             Column(
               children: [
-                splashScreenBody.splashScreenText(text: 'Greenio'),
-                splashScreenBody.splashScreenText(
-                  text: 'Green for Good',
-                  textStyle: splashScreenBody.splashTextStyle,
-                ),
+                SplashScreenComponents.splashScreenText(text: 'Greenio'),
+                SplashScreenComponents.splashScreenText(
+                    text: 'Green for Good', textStyle: SplashScreenComponents.splashTextStyle),
               ],
             )
           ],

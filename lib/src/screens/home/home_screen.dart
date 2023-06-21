@@ -3,7 +3,6 @@ import 'package:greenio/src/screens/donation/donation_screen.dart';
 import 'package:greenio/src/screens/home/components/home_screen_components.dart';
 import 'package:greenio/src/screens/home/components/signout_user.dart';
 import 'package:greenio/src/screens/recycle/recycle_screen.dart';
-
 import 'package:greenio/src/utils/constants/assets_path.dart';
 import 'package:greenio/src/utils/navigation/navigation_utils.dart';
 import 'package:greenio/src/utils/widgets/spacing_utils.dart';
@@ -17,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final homeScreenComponents = HomeScreenComponents();
 
   _onSignOutButtonPressed() {
     showDialog(
@@ -27,12 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
           title: const Text('Logout'),
           content: const Text('Are you sure you want to logout?'),
           actions: [
-            homeScreenComponents.alertDialogButton(
+            HomeScreenComponents.dialogButton(
               buttonText: 'Cancel',
               backgroundColor: Colors.green,
               onPressed: _onCancelPressed(ctx),
             ),
-            homeScreenComponents.alertDialogButton(
+            HomeScreenComponents.dialogButton(
               buttonText: 'Logout',
               backgroundColor: Colors.red,
               onPressed: _onLogoutPressed(ctx),
@@ -79,17 +77,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [                
                 const EmptySpace(heightFraction: 0.02,),
-                homeScreenComponents.homeScreenHeading(),
+                HomeScreenComponents.heading(),
                 const EmptySpace(heightFraction: 0.01,),
-                homeScreenComponents.homeScreenSubHeading(),
+                HomeScreenComponents.subHeading(),
                 const EmptySpace(heightFraction: 0.15,),
-                homeScreenComponents.homeScreenButton(
+                HomeScreenComponents.navigationButton(
                     onTap: _goToDonationScreen,
                     leadingImage: donationButtonImagePath,
                     buttonText: 'Donate',
                     trailingIcon: Icons.volunteer_activism_outlined),
                 const EmptySpace(heightFraction: 0.1,),
-                homeScreenComponents.homeScreenButton(
+                HomeScreenComponents.navigationButton(
                   onTap: _goToRecycleScreen,
                   leadingImage: recyclerButtonImagePath,
                   buttonText: 'Recycle',

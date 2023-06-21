@@ -77,5 +77,4 @@ class FirestoreService {
     final wardStreamDocSnapshot = _wardSchedulesCollectionRef.doc(wardNumber).snapshots();
     return wardStreamDocSnapshot;
   }
-
 }

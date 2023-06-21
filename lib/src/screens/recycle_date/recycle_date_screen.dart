@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:greenio/src/models/user/user_model.dart';
 import 'package:greenio/src/models/ward_schedule/ward_schedule_model.dart';
 import 'package:greenio/src/screens/no_internet/no_internet_screen.dart';
+import 'package:greenio/src/screens/recycle_date/components/recycle_date_screen_components.dart';
 import 'package:greenio/src/services/firestore_service.dart';
 import 'package:greenio/src/utils/connectivity/internet_connectivity.dart';
 import 'package:greenio/src/utils/widgets/snackbar_helper.dart';
@@ -33,6 +34,11 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
 
   StreamSubscription<DocumentSnapshot>? wardDatesSubscription;
 
+  String checkRegulary = 'The provided options for dates can change each month.\nDo regularly check for any changes.';
+  String noDates =
+      'Please check again later.\nCurrenly no dates has been assigned for garbage collection for your ward.';
+  String alreadyCollected = 'The garbage collection for your house number has already been completed for this month.';
+
   @override
   void initState() {
     super.initState();
@@ -52,18 +58,18 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
       return;
     }
     _wardNumber = user.wardNumber!;
-    final wardDocsSnapshot = _firestoreService.wardSchedulesCollectionRef.doc(_wardNumber).snapshots();
-    wardDatesSubscription = wardDocsSnapshot.listen((wardDoc) async {
-      if (wardDoc.exists) {
-        wardSchedule = WardScheduleModel.fromMap(wardDoc.data()!);
-        assignedDates = wardSchedule.assignedDates.toList();
+    final wardDocsSnapshotStream = _firestoreService.wardSchedulesCollectionRef.doc(_wardNumber).snapshots();
+    wardDatesSubscription = wardDocsSnapshotStream.listen((wardDocSnapshot) async {
+      if (wardDocSnapshot.exists) {
+        wardSchedule = WardScheduleModel.fromMap(wardDocSnapshot.data()!);
+        assignedDates = wardSchedule.assignedDates;
         if (wardSchedule.selectedDates != null) {
           selectedDates = wardSchedule.selectedDates!;
-          setSelectedDates(selectedDates, _wardNumber);
+          setSelectedDate(selectedDates);
         }
       } else {
         assignedDates = [];
-        setSelectedDates({}, _wardNumber);
+        setSelectedDate({});
       }
       setState(() {
         _houseNumber = user.houseNumber!;
@@ -71,10 +77,41 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
     });
   }
 
-  void setSelectedDates(Map<String, dynamic>? selectedDates, String wardNumber) async {
+  void setSelectedDate(Map<String, dynamic>? selectedDates) async {
     _houseNumber = user.houseNumber;
     selectedDate = selectedDates?[_houseNumber];
     selectedDateNotifier.value = selectedDate;
+  }
+
+  ValueListenableBuilder<DateTime?> _showCurrentlySelectedDate() {
+    return ValueListenableBuilder(
+      valueListenable: selectedDateNotifier,
+      builder: (context, selectedDate, child) {
+        if (selectedDate != null) {
+          final String formattedDate = DateFormat.yMMMMd().format(selectedDate);
+          return RecycleDateScreenComponents.selectedDateCard(formattedDate, Colors.green);
+        } else {
+          return RecycleDateScreenComponents.selectedDateCard('None', Colors.red);
+        }
+      },
+    );
+  }
+
+  ListView _showDatesOptions() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: assignedDates.length,
+      itemBuilder: (context, index) {
+        final date = assignedDates[index];
+        return ValueListenableBuilder<DateTime?>(
+          valueListenable: selectedDateNotifier,
+          builder: (context, selectedDate, child) {
+            final isSelected = date == selectedDate;
+            return RecycleDateScreenComponents.dateOptionsCard(date, isSelected, () => selectDate(date));
+          },
+        );
+      },
+    );
   }
 
   void selectDate(DateTime date) {
@@ -93,128 +130,30 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
     SnackBarHelper.showSnackBar(context, 'Date assigned! You can go back now!');
   }
 
-  Card _showDates(DateTime date, bool isSelected) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        tileColor: isSelected ? Colors.green[400] : null,
-        title: Text(
-          DateFormat.yMMMd().format(date),
-          style: TextStyle(
-            color: isSelected ? Colors.white : null,
-            fontWeight: isSelected ? FontWeight.bold : null,
-          ),
-        ),
-        trailing: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
-        onTap: () {
-          selectDate(date);
-        },
-      ),
-    );
-  }
-
-  ListTile _showNote(String text) {
-    return ListTile(
-      leading: const Icon(Icons.info),
-      subtitle: Text(
-        text,
-        style: const TextStyle(fontSize: 20),
-      ),
-    );
-  }
-
-  ValueListenableBuilder<DateTime?> _showCurrentlySelectedDate() {
-    return ValueListenableBuilder(
-      valueListenable: selectedDateNotifier,
-      builder: (context, selectedDate, child) {
-        if (selectedDate != null) {
-          final String formattedDate = DateFormat.yMMMMd().format(selectedDate);
-          return _showCurrentlySelectedDateCard(formattedDate, Colors.green);
-        } else {
-          return _showCurrentlySelectedDateCard('None', Colors.red);
-        }
-      },
-    );
-  }
-
-  Card _showCurrentlySelectedDateCard(String text, Color color) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        title: Text(
-          'Currently selected date:\n$text',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        tileColor: color,
-        textColor: Colors.white,
-      ),
-    );
-  }
-
-  ElevatedButton _showConfirmButton() {
-    return ElevatedButton(
-      onPressed: () {
-        confirmSelection();
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green[400],
-      ),
-      child: const Text('Confirm date'),
-    );
-  }
-
-  ListView _showDatesOptions() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: assignedDates.length,
-      itemBuilder: (context, index) {
-        final date = assignedDates[index];
-        return ValueListenableBuilder<DateTime?>(
-          valueListenable: selectedDateNotifier,
-          builder: (context, selectedDate, child) {
-            final isSelected = date == selectedDate;
-            return _showDates(date, isSelected);
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Select a Date'),
-        ),
+        appBar: AppBar(title: const Text('Select a Date')),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: selectedDates.isEmpty || (selectedDates.isNotEmpty && selectedDate != null)
+          child: (selectedDates.isEmpty || (selectedDates.isNotEmpty && selectedDate != null))
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: assignedDates.isNotEmpty
                       ? [
                           _showDatesOptions(),
                           const EmptySpace(heightFraction: 0.02),
-                          _showConfirmButton(),
+                          RecycleDateScreenComponents.showConfirmButton(confirmSelection),
                           const EmptySpace(heightFraction: 0.1),
                           _showCurrentlySelectedDate(),
                           const EmptySpace(heightFraction: 0.1),
-                          _showNote(
-                              'The provided options for dates can change each month.\nDo regularly check for any changes.'),
+                          RecycleDateScreenComponents.note(checkRegulary),
                         ]
-                      : [
-                          _showNote(
-                              'Please check again later.\nCurrenly no dates has been assigned for garbage collection for your ward.'),
-                        ],
+                      : [RecycleDateScreenComponents.note(noDates)],
                 )
-              : Center(
-                  child: _showNote(
-                      "The garbage collection for your house number has already been completed for this month."),
-                ),
+              : Center(child: RecycleDateScreenComponents.note(alreadyCollected)),
         ),
       );
     } else {

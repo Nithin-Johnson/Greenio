@@ -33,34 +33,28 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   InkWell _customButton({
-    required String buttonText,
-    required IconData trailingIcon,
+    required String text,
+    required IconData icon,
     required void Function() onTap,
   }) {
     return InkWell(
       onTap: onTap,
       splashColor: Colors.white,
       child: Ink(
-        decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(10),
-        ),
+        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)),
         child: ListTile(
           title: Text(
-            buttonText,
+            text,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          leading: Icon(trailingIcon, color: Colors.white),
+          leading: Icon(icon, color: Colors.white),
         ),
       ),
     );
   }
 
   _showNotes(String text) {
-    return ListTile(
-      leading: const Icon(Icons.info),
-      subtitle: Text(text),
-    );
+    return ListTile(leading: const Icon(Icons.info), subtitle: Text(text));
   }
 
   @override
@@ -68,9 +62,7 @@ class _AdminScreenState extends State<AdminScreen> {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Admin Control Panel'),
-        ),
+        appBar: AppBar(title: const Text('Admin Control Panel')),
         body: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: StreamBuilder(
@@ -83,43 +75,29 @@ class _AdminScreenState extends State<AdminScreen> {
                 final user = UserModel.fromMap(userDoc);
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (user.adminType == AdminType.ngo)
-                      Column(
-                        children: [
+                  children: (user.adminType == AdminType.ngo)
+                      ? [
                           _customButton(
-                              buttonText: 'Check Pending Donations List',
-                              trailingIcon: Icons.list,
-                              onTap: () {
-                                _goToWardList();
-                              }),
-                          const EmptySpace(
-                            heightFraction: 0.1,
-                          ),
-                          _showNotes('You can check the list of wards for which there is a pending donation.')
-                        ],
-                      ),
-                    if (user.adminType == AdminType.govt)
-                      Column(
-                        children: [
+                              text: 'Check Pending Donations List', icon: Icons.list, onTap: () => _goToWardList()),
+                          const EmptySpace(heightFraction: 0.05),
+                          _showNotes('You can check the list of wards for which there is a pending donation.'),
+                        ]
+                      : [
                           const EmptySpace(heightFraction: 0.1),
                           _customButton(
-                              buttonText: 'Assign Collection Dates',
-                              trailingIcon: Icons.date_range_outlined,
+                              text: 'Assign Collection Dates',
+                              icon: Icons.date_range_outlined,
                               onTap: () => _goToDateAssign()),
                           const EmptySpace(heightFraction: 0.01),
-                          _showNotes('You can assign specific collection dates for each ward to schedule garbage collection.'),
+                          _showNotes(
+                              'You can assign specific collection dates for each ward to schedule garbage collection.'),
                           const EmptySpace(heightFraction: 0.1),
                           _customButton(
-                              buttonText: 'View Selected Dates',
-                              trailingIcon: Icons.date_range,
-                              onTap: () => _goToSelectedDate()),
+                              text: 'View Selected Dates', icon: Icons.date_range, onTap: () => _goToSelectedDate()),
                           const EmptySpace(heightFraction: 0.01),
                           _showNotes(
                               'You can view the dates selected by each household within each ward for garbage collection.'),
                         ],
-                      ),
-                  ],
                 );
               }),
         ),

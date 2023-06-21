@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
 class HomeScreenComponents {
-  Text homeScreenHeading() => const Text(
-        'What you can do',
-        style: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+  static Text heading() {
+    return const Text(
+      'What you can do',
+      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    );
+  }
 
-  Text homeScreenSubHeading() => const Text(
-        "Let's make a better world",
-      );
+  static Text subHeading() {
+    return const Text("Let's make a better world");
+  }
 
-  InkWell homeScreenButton({
+  static InkWell navigationButton({
     required Function() onTap,
     required String leadingImage,
     required String buttonText,
@@ -24,11 +23,10 @@ class HomeScreenComponents {
       splashColor: Colors.white,
       child: Ink(
         decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.green[300]!)
-        ),
-        child: ListTile(          
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.green[300]!)),
+        child: ListTile(
           leading: CircleAvatar(
             radius: 22,
             backgroundImage: AssetImage(leadingImage),
@@ -49,7 +47,7 @@ class HomeScreenComponents {
     );
   }
 
-  alertDialogButton({
+  static TextButton dialogButton({
     required String buttonText,
     required MaterialColor backgroundColor,
     required Function() onPressed,

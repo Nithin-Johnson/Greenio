@@ -6,6 +6,7 @@ import 'package:greenio/src/screens/no_internet/no_internet_screen.dart';
 import 'package:greenio/src/services/firestore_service.dart';
 import 'package:greenio/src/utils/connectivity/internet_connectivity.dart';
 import 'package:greenio/src/utils/navigation/navigation_utils.dart';
+import 'package:greenio/src/utils/widgets/spacing_utils.dart';
 import 'package:provider/provider.dart';
 
 class WardListScreen extends StatefulWidget {
@@ -18,12 +19,16 @@ class WardListScreen extends StatefulWidget {
 class _WardListScreenState extends State<WardListScreen> {
   final FirestoreService _firestoreService = FirestoreService();
 
+  Future<void> _refreshScreen() async {
+    setState(() {});
+  }
+
   Stream<List<String>> _getFilteredWardNumbers() {
     return _firestoreService.getUsersQuerySnapshot().asyncMap((snapshot) async {
       final filteredWardNumbers = <String>{};
       for (final userDoc in snapshot.docs) {
         final UserModel user = UserModel.fromMap(userDoc.data());
-        final wardNumber = user.wardNumber ?? '';        
+        final wardNumber = user.wardNumber ?? '';
         final items = await getCollectedItems(userDoc.id);
         if (items.docs.isNotEmpty) filteredWardNumbers.add(wardNumber);
       }
@@ -37,8 +42,8 @@ class _WardListScreenState extends State<WardListScreen> {
       for (final userDoc in snapshot.docs) {
         final UserModel user = UserModel.fromMap(userDoc.data());
         final houseNumber = user.houseNumber ?? '';
-        final items = await getCollectedItems(userDoc.id);
-        if (items.docs.isNotEmpty && user.wardNumber == wardNumber) filteredHouseNumbers.add(houseNumber);
+        final itemsQuerySnapshot = await getCollectedItems(userDoc.id);
+        if (itemsQuerySnapshot.docs.isNotEmpty && user.wardNumber == wardNumber) filteredHouseNumbers.add(houseNumber);
       }
       return filteredHouseNumbers.toList()..sort((a, b) => int.parse(a).compareTo(int.parse(b)));
     });
@@ -58,7 +63,7 @@ class _WardListScreenState extends State<WardListScreen> {
       stream: _getFilteredHouseNumbers(wardNumber),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const SizedBox.shrink();
+          return const EmptySpace();
         }
         final filteredHouseNumbers = snapshot.data ?? [];
         return Card(
@@ -67,10 +72,7 @@ class _WardListScreenState extends State<WardListScreen> {
           child: ExpansionTile(
             title: Text(
               'Ward Number: $wardNumber',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             iconColor: Colors.white,
             textColor: Colors.white,
@@ -88,9 +90,7 @@ class _WardListScreenState extends State<WardListScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: ListTile(
                       title: Text('House Number: $houseNumber'),
-                      onTap: () {
-                        _goToDonationListScreen(wardNumber, houseNumber);
-                      },
+                      onTap: () => _goToDonationListScreen(wardNumber, houseNumber),
                     ),
                   );
                 },
@@ -106,24 +106,20 @@ class _WardListScreenState extends State<WardListScreen> {
     _firestoreService.userCollectionRef
         .where('wardNumber', isEqualTo: wardNumber)
         .where('houseNumber', isEqualTo: houseNumber)
-        .limit(1) // Limit the query to retrieve only one document
+        .limit(1)
         .get()
-        .then((querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        final document = querySnapshot.docs.first;
-        final itemCollection = document.reference.collection('Items');
-
-        // Navigate to the item list page
-
-        NavigationUtils.navigateTo(
-            context,
-            DonationListScreen(
-              wardNumber: wardNumber,
-              houseNumber: houseNumber,
-              itemCollection: itemCollection,
-            ));
-      }
-    });
+        .then(
+      (querySnapshot) {
+        if (querySnapshot.docs.isNotEmpty) {
+          final document = querySnapshot.docs.first;
+          final itemCollectionRef = document.reference.collection('Items');
+          NavigationUtils.navigateTo(
+              context,
+              DonationListScreen(
+                  wardNumber: wardNumber, houseNumber: houseNumber, itemCollectionRef: itemCollectionRef));
+        }
+      },
+    );
   }
 
   @override
@@ -131,40 +127,38 @@ class _WardListScreenState extends State<WardListScreen> {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Pending Donations Ward List'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: StreamBuilder<List<String>>(
-            stream: _getFilteredWardNumbers(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }              
-              if (snapshot.hasData && snapshot.data!.isEmpty) {
-                return const Center(
-                  child: ListTile(
-                    leading: Icon(Icons.info),
-                    title: Text(
-                      'No pending donations',
-                      style: TextStyle(fontSize: 20),
+        appBar: AppBar(title: const Text('Pending Donations Ward List')),
+        body: RefreshIndicator(          
+          onRefresh: _refreshScreen,
+          backgroundColor: Colors.green,
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: StreamBuilder<List<String>>(
+              stream: _getFilteredWardNumbers(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: ListTile(
+                      leading: Icon(Icons.info),
+                      title: Text('No pending donations', style: TextStyle(fontSize: 20)),
+                      subtitle: Text('Please check again later.\nCurrenly there is no pending donations from anyone.'),
                     ),
-                    subtitle: Text('Please check again later.\nCurrenly there is no pending donations from anyone.'),
-                  ),
+                  );
+                }
+                final filteredWardNumbers = snapshot.data ?? [];
+                return ListView.builder(
+                  itemCount: filteredWardNumbers.length,
+                  itemBuilder: (context, index) {
+                    final wardNumber = filteredWardNumbers[index];
+                    return _buildExpansionTile(wardNumber);
+                  },
                 );
-              }
-              final filteredWardNumbers = snapshot.data ?? [];
-              return ListView.builder(
-                itemCount: filteredWardNumbers.length,
-                itemBuilder: (context, index) {
-                  final wardNumber = filteredWardNumbers[index];
-                  return _buildExpansionTile(wardNumber);
-                },
-              );
-            },
+              },
+            ),
           ),
         ),
       );

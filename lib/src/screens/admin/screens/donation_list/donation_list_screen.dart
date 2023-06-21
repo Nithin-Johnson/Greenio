@@ -2,22 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:greenio/src/models/item/item_model.dart';
 import 'package:greenio/src/screens/no_internet/no_internet_screen.dart';
-import 'package:greenio/src/services/firestore_service.dart';
 import 'package:greenio/src/utils/connectivity/internet_connectivity.dart';
+import 'package:greenio/src/utils/widgets/spacing_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class DonationListScreen extends StatefulWidget {
-  final CollectionReference itemCollection;
+  final CollectionReference itemCollectionRef;
   final String houseNumber;
   final String wardNumber;
 
-  const DonationListScreen({
-    super.key,
-    required this.wardNumber,
-    required this.houseNumber,
-    required this.itemCollection,
-  });
+  const DonationListScreen(
+      {super.key, required this.wardNumber, required this.houseNumber, required this.itemCollectionRef});
 
   @override
   State<DonationListScreen> createState() => _DonationListScreenState();
@@ -33,11 +29,9 @@ class _DonationListScreenState extends State<DonationListScreen> {
           leading: CircleAvatar(
             radius: 25,
             backgroundImage: NetworkImage(item.imageUrl),
+            backgroundColor: Colors.green[200],
             child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
+              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
             ),
           ),
           title: Text(
@@ -73,11 +67,11 @@ class _DonationListScreenState extends State<DonationListScreen> {
                         child: Image.network(item.imageUrl, fit: BoxFit.cover),
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const EmptySpace(heightFraction: 0.01,),
                     _showExpansionTile('Item Category', item.category),
-                    const SizedBox(height: 8.0),
+                    const EmptySpace(heightFraction: 0.01,),
                     _showExpansionTile('Item Description', item.description),
-                    const SizedBox(height: 8.0),
+                    const EmptySpace(heightFraction: 0.01,),
                     _showExpansionTile(
                         'Item Pickup Date', DateFormat('MMMM d yyyy (dd / MM / y)').format(item.pickupDate)),
                     _showMarkAsCollectedButton(item),
@@ -91,7 +85,7 @@ class _DonationListScreenState extends State<DonationListScreen> {
     );
   }
 
-  _showExpansionTile(titleText, subtitleText) {
+  Card _showExpansionTile(titleText, subtitleText) {
     return Card(
       color: Colors.green[300],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -133,8 +127,8 @@ class _DonationListScreenState extends State<DonationListScreen> {
   }
 
   void updateItemCollected(DonationItemModel item) {
-    DocumentReference documentRef = FirestoreService().getUserItemCollectionRef().doc(item.id);
-    documentRef.update({'isCollected': true}).then((value) {}).catchError((error) {});
+    DocumentReference documentRef = widget.itemCollectionRef.doc(item.id);
+    documentRef.update({'isCollected': true}).then((_) {}).catchError((error){});
     Navigator.of(context).pop();
   }
 
@@ -143,13 +137,11 @@ class _DonationListScreenState extends State<DonationListScreen> {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Items'),
-        ),
+        appBar: AppBar(title: const Text('Items')),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: StreamBuilder<QuerySnapshot>(
-            stream: widget.itemCollection.where('isCollected', isEqualTo: false).snapshots(),
+            stream: widget.itemCollectionRef.where('isCollected', isEqualTo: false).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

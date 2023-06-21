@@ -5,13 +5,12 @@ import 'package:greenio/src/screens/wrappers/auth_wrapper.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({super.key});
-
   @override
   State<MainWrapper> createState() => _MainWrapperState();
 }
 
 class _MainWrapperState extends State<MainWrapper> {
-  final _firebaseAuthentication = FirebaseAuthService();
+  final FirebaseAuthService _firebaseAuthentication = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {

@@ -19,7 +19,7 @@ class AboutScreen extends StatelessWidget {
         color: Colors.green[500],
         child: ListTile(
           leading: Icon(prefixIcon),
-          title: Text(title),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold),),
           subtitle: Text(subtitle),
           textColor: Colors.white,
           iconColor: Colors.white,
@@ -31,34 +31,30 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('About'),
-      ),
+      appBar: AppBar(title: const Text('About')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const EmptySpace(
-              heightFraction: 0.03,
-            ),
-            Center(
-                child: Image.asset(
-              appLogoImagePath,
-              height: 120,
-            )),
-            const Divider(thickness: 2),
-            _showButtons(prefixIcon: Icons.numbers, title: 'App Version', subtitle: 'Version 1.0'),            
-            _showButtons(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const EmptySpace(heightFraction: 0.03),
+              Center(child: Image.asset(appLogoImagePath, height: 120)),
+              const Divider(thickness: 2),
+              _showButtons(prefixIcon: Icons.numbers, title: 'App Version', subtitle: 'Version 1.0.0'),
+              _showButtons(
                 prefixIcon: Icons.contact_mail_outlined,
                 title: 'Contact us',
                 subtitle: 'greenioworld23@gmail.com',
-                onTap: () async {                  
+                onTap: () async {
                   const url = 'mailto:greenioworld23@gmail.com?subject=Feedback';
                   final uri = Uri.parse(url);
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri);
                   }
-                })
-          ],
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
