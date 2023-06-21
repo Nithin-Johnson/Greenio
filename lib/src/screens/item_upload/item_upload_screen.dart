@@ -202,6 +202,10 @@ class _ItemUploadScreenState extends State<ItemUploadScreen> {
     File? image = File(pickedImage.path);
     image = await _cropImage(image);
     _imageFile.value = image;
+    _popOutDialog();
+  }
+
+  _popOutDialog() {
     Navigator.pop(context);
   }
 

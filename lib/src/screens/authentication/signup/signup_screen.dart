@@ -33,6 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _rePasswordController = TextEditingController();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   Widget get _emailTextField => CustomTextFormFieldTile(
         controller: _emailController,
         hintText: 'Email',
@@ -71,15 +73,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _onSignUpButtonPressed() async {
-    _showLoading();
-    await SignupUser.registerWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      onSuccess: onSignUpSuccess,
-      onFailure: onSignUpFailure,
-    );
-    UserModel user = UserModel(emailAddress: _emailController.text.trim());
-    _firestoreService.addUserDocToDatabase(user);
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      _showLoading();
+      await SignupUser.registerWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        onSuccess: onSignUpSuccess,
+        onFailure: onSignUpFailure,
+      );
+      UserModel user = UserModel(emailAddress: _emailController.text.trim());
+      _firestoreService.addUserDocToDatabase(user);
+    }
   }
 
   void _showLoading() async {
@@ -112,22 +117,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Padding(
             padding: const EdgeInsets.all(25.0),
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  authScreenText(text: 'Hello there!', fontSize: 50, isBold: true),
-                  const EmptySpace(heightFraction: 0.01),
-                  authScreenText(text: 'Register below with your details', fontSize: 20),
-                  const EmptySpace(heightFraction: 0.03),
-                  _emailTextField,
-                  const EmptySpace(heightFraction: 0.001),
-                  _passwordTextField,
-                  const EmptySpace(heightFraction: 0.001),
-                  _rePasswordTextField,
-                  const EmptySpace(heightFraction: 0.03),
-                  CustomElevatedButton(text: 'Sign Up', onPressed: _onSignUpButtonPressed),
-                  const EmptySpace(heightFraction: 0.02),
-                  _switchToLoginScreenButton(),
-                ],
+              child: Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  children: [
+                    authScreenText(text: 'Hello there!', fontSize: 50, isBold: true),
+                    const EmptySpace(heightFraction: 0.01),
+                    authScreenText(text: 'Register below with your details', fontSize: 20),
+                    const EmptySpace(heightFraction: 0.03),
+                    _emailTextField,
+                    const EmptySpace(heightFraction: 0.001),
+                    _passwordTextField,
+                    const EmptySpace(heightFraction: 0.001),
+                    _rePasswordTextField,
+                    const EmptySpace(heightFraction: 0.03),
+                    CustomElevatedButton(text: 'Sign Up', onPressed: _onSignUpButtonPressed),
+                    const EmptySpace(heightFraction: 0.02),
+                    _switchToLoginScreenButton(),
+                  ],
+                ),
               ),
             ),
           ),

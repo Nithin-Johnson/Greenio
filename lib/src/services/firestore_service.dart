@@ -78,19 +78,4 @@ class FirestoreService {
     return wardStreamDocSnapshot;
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getWardFutureQuerySnapshot() async {
-    final wardFutureQuerySnapshot = await _wardSchedulesCollectionRef.get();
-    return wardFutureQuerySnapshot;
-  }
-
-  Future<DocumentSnapshot<Map<String, dynamic>>> getWardFutureDocSnapshot(String wardNumber) async {
-    final wardFutureDocSnapshot = await _wardSchedulesCollectionRef.doc(wardNumber).get();
-    return wardFutureDocSnapshot;
-  }
-
-  Future<Map<String, dynamic>?> getWardScheduleFromDatabase(String wardNumber) async {
-    final wardScheduleDocSnapshot = await _wardSchedulesCollectionRef.doc(wardNumber).get();
-    final wardScheduleData = wardScheduleDocSnapshot.data();
-    return wardScheduleData;
-  }
 }

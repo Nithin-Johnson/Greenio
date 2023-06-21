@@ -158,6 +158,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     File? image = File(pickedImage.path);
     image = await _cropImage(image);
     _imageFile.value = image;
+    _popOutDialog();
+  }
+
+  _popOutDialog() {
     Navigator.pop(context);
   }
 
@@ -277,7 +281,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.location_city_outlined),
                   title: Text(
-                    selectedWardNumber.value !=null ? '${selectedWardNumber.value} - ${wardNumbers[selectedWardNumber.value]}' : '',
+                    selectedWardNumber.value != null
+                        ? '${selectedWardNumber.value} - ${wardNumbers[selectedWardNumber.value]}'
+                        : '',
                     style: const TextStyle(fontSize: 17),
                   ),
                 ),
