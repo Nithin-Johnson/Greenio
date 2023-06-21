@@ -52,7 +52,7 @@ class _RecycleDateScreenState extends State<RecycleDateScreen> {
       return;
     }
     _wardNumber = user.wardNumber!;
-    final wardDocsSnapshot = _firestoreService.getWardStreamDocSnapshot(_wardNumber);
+    final wardDocsSnapshot = _firestoreService.wardSchedulesCollectionRef.doc(_wardNumber).snapshots();
     wardDatesSubscription = wardDocsSnapshot.listen((wardDoc) async {
       if (wardDoc.exists) {
         wardSchedule = WardScheduleModel.fromMap(wardDoc.data()!);

@@ -24,22 +24,24 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
   String? selectedWardNumber;
   List<DateTime> selectedDates = [];
   List<String> wardNumbers = [];
-  Map<String, String> wardNumbersData = cheriyanadWardList;
+  Map<String, String> wardNumbersMap = cheriyanadWardList;
 
   Map<String, List<DateTime>> wardDatesMap = {};
 
   late ValueNotifier<String?> selectedWardNotifier;
   late ValueNotifier<List<DateTime>> selectedDatesNotifier;
 
-  late Stream<QuerySnapshot> wardDatesStream;
+  late Stream<QuerySnapshot> wardScheduleStream;
+
+  ValueNotifier<bool> assignedDatesEmpty = ValueNotifier<bool>(true);
 
   @override
   void initState() {
     super.initState();
     selectedWardNotifier = ValueNotifier<String?>(null);
     selectedDatesNotifier = ValueNotifier<List<DateTime>>([]);
-    wardNumbers = wardNumbersData.keys.toList();
-    wardDatesStream = _firestoreService.getWardStreamQuerySnapshot();
+    wardNumbers = wardNumbersMap.keys.toList();
+    wardScheduleStream = _firestoreService.getWardStreamQuerySnapshot();
   }
 
   @override
@@ -50,14 +52,12 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
   }
 
   void uploadDates(String wardNumber, List<DateTime> dates) async {
-    final WardScheduleModel wardSchedule = WardScheduleModel(
-      wardNumber: wardNumber,
-      assignedDates: dates,
-    );
-    await _firestoreService.addWardScheduleToDatabase(wardSchedule).then((value) {
+    final WardScheduleModel wardSchedule = WardScheduleModel(wardNumber: wardNumber, assignedDates: dates);
+    await _firestoreService.addWardScheduleToDatabase(wardSchedule).then((_) {
       selectedWardNotifier.value = null;
       selectedDatesNotifier.value = [];
       wardDatesMap[wardNumber] = dates;
+      assignedDatesEmpty.value = false;
     }).catchError((error) {});
   }
 
@@ -74,21 +74,21 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
 
   StreamBuilder<QuerySnapshot> _showAlreadyAssignedDatesList() {
     return StreamBuilder<QuerySnapshot>(
-      stream: wardDatesStream,
+      stream: wardScheduleStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Text('No assigned dates');
         }
         if (snapshot.hasData) {
-          final wardDatesDocs = snapshot.data!.docs;
+          final wardScheduleDocs = snapshot.data!.docs;
           return ListView.builder(
             shrinkWrap: true,
-            itemCount: wardDatesDocs.length,
+            itemCount: wardScheduleDocs.length,
             itemBuilder: (context, index) {
-              final wardNumber = wardDatesDocs[index].id;
-              final wardName = wardNumbersData[wardNumber];
+              final wardNumber = wardScheduleDocs[index].id;
+              final wardName = wardNumbersMap[wardNumber];
               return FutureBuilder<Map<String, dynamic>?>(
-                future: _firestoreService.getWardScheduleFromDatabase(wardNumber),
+                future: _getWardScheduleFromDatabase(wardNumber),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
@@ -102,6 +102,9 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
                   }
                   final wardSchedule = WardScheduleModel.fromMap(assignedDates);
                   final dates = wardSchedule.assignedDates;
+                  if (dates.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
                   final formattedDates =
                       dates.map((date) => DateFormat('MMMM d yyyy (dd / MM / y)').format(date)).toList();
                   return Card(
@@ -138,10 +141,15 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
+  }
+
+  Future<Map<String, dynamic>?> _getWardScheduleFromDatabase(wardNumber) async {
+    final wardScheduleDocSnapshot = await _firestoreService.wardSchedulesCollectionRef.doc(wardNumber).get();
+    return wardScheduleDocSnapshot.data();
   }
 
   Widget _showUploadDatesButton() {
@@ -212,6 +220,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
       child: ElevatedButton(
         onPressed: () async {
           if (selectedDatesNotifier.value.length >= 3) {
+            SnackBarHelper.showSnackBar(context, 'Only three dates are allowed');
             return;
           }
           final DateTime? pickedDate = await showDatePicker(
@@ -259,7 +268,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
           child: DropdownButton2<String>(
             value: value,
             items: wardNumbers.map((wardNumber) {
-              final wardName = wardNumbersData[wardNumber]!;
+              final wardName = wardNumbersMap[wardNumber]!;
               return DropdownMenuItem<String>(
                 value: wardNumber,
                 child: Text(
@@ -273,37 +282,36 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
             },
             hint: const Text(
               'Select a Ward Number',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: TextStyle(color: Colors.white),
             ),
             isExpanded: true,
             style: const TextStyle(color: Colors.white),
             buttonStyleData: ButtonStyleData(
-              decoration: BoxDecoration(
-                color: Colors.green[400],
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(color: Colors.green[400], borderRadius: BorderRadius.circular(8)),
               elevation: 2,
               padding: const EdgeInsets.only(left: 5, right: 20),
             ),
             dropdownStyleData: DropdownStyleData(
                 maxHeight: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.green[300],
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.green[300]),
                 scrollbarTheme: ScrollbarThemeData(
                   thumbColor: MaterialStateProperty.all(Colors.green),
                   thumbVisibility: MaterialStateProperty.all(true),
                 )),
-            iconStyleData: const IconStyleData(
-              iconEnabledColor: Colors.white,
-            ),
+            iconStyleData: const IconStyleData(iconEnabledColor: Colors.white),
           ),
         );
       },
     );
+  }
+
+  _clearAssignedDates() async {
+    final wardSchedulesCollectionRef = _firestoreService.wardSchedulesCollectionRef;
+    final querySnapshot = await wardSchedulesCollectionRef.get();
+    for (var docSnapshot in querySnapshot.docs) {
+      wardSchedulesCollectionRef.doc(docSnapshot.id).update({'assignedDates': []});
+    }
+    assignedDatesEmpty.value = true;
   }
 
   @override
@@ -311,9 +319,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
     final connectivityStatus = Provider.of<ConnectivityStatus>(context);
     if (connectivityStatus.isConnected) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Date collection'),
-        ),
+        appBar: AppBar(title: const Text('Date collection')),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
@@ -326,7 +332,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
                 const Divider(),
                 const EmptySpace(heightFraction: 0.03),
                 const Divider(),
-                _labelText('Select two or three dates:'),
+                _labelText('Select three dates:'),
                 _showDatePickerButton(context),
                 const Divider(),
                 const EmptySpace(heightFraction: 0.03),
@@ -338,7 +344,21 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
                 _showUploadDatesButton(),
                 const EmptySpace(heightFraction: 0.03),
                 const Divider(),
-                _labelText('Assigned Dates:'),
+                ValueListenableBuilder(
+                  valueListenable: assignedDatesEmpty,
+                  builder: (context, value, child) {
+                    return !assignedDatesEmpty.value
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _labelText('Assigned Dates:'),
+                              IconButton(
+                                  onPressed: () async => _clearAssignedDates(), icon: const Icon(Icons.delete_forever))
+                            ],
+                          )
+                        : _labelText('Assigned Dates: None');
+                  },
+                ),
                 _showAlreadyAssignedDatesList(),
                 const Divider(),
               ],
