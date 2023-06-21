@@ -215,6 +215,7 @@ class _DateAssignScreenState extends State<DateAssignScreen> {
         if (snapshot.hasData) {
           final wardScheduleDocSnapshotList = snapshot.data!.docs;
           return ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: wardScheduleDocSnapshotList.length,
             itemBuilder: (context, index) {
